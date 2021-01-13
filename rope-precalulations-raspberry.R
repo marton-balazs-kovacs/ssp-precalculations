@@ -43,7 +43,7 @@ set_split <- split(set, set$n_iterate)
 # Run the calculation
 ## As a safety net after every 100 calculations we save the data and empty the memory.
 ## Init variables for the loop
-n_saves <- nrow(set_split)  / 100
+n_saves <- length(set_split)  / 100
 init <- 1
 
 ## Run the calculations

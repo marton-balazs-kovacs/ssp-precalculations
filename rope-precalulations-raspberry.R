@@ -1,6 +1,9 @@
 # Load packages
-library(tidyverse)
+library(purrr)
+library(dplyr)
 library(furrr)
+library(tidyr)
+library(readr)
 
 # Load functions
 r_scripts <- list.files("R/", full.names = TRUE)

@@ -1,7 +1,7 @@
 # Load packages
 library(purrr)
 library(dplyr)
-library(furrr)
+#library(furrr)
 library(tidyr)
 library(readr)
 
@@ -18,13 +18,13 @@ ifelse(!dir.exists("./rope-res"),
        "Directory already exists.")
 
 # Get the number of cores on the machine
-availableCores()
+#availableCores()
 
 # Set the number of cores that you want to allocate here
-n_cores <- 1
+#n_cores <- 1
 
 # Make a future plan for one multicore machine
-plan(multisession, workers = n_cores)
+#plan(multisession, workers = n_cores)
 
 # Create datatable storing possible ROPE options
 rope_options <- 
@@ -59,13 +59,16 @@ for (i in 1:n_saves) {
   init <- slice_n + 1
   
   # Calculate ROPE
-  rope_res <-  furrr::future_map(set_split_sliced,
+  rope_res <-  purrr::map(set_split_sliced,
                                   ~ ssp_rope_safe(opt = .$power,
                                                   band = .$band,
                                                   delta = .$delta))
   
   # Saving data
   write_rds(rope_res, paste0("./rope-res/miklos-set-", i, ".rds"))
+  
+  # Delete output object from the global env
+  rm(rope_res)
   
   # Empty memory
   gc()

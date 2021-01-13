@@ -1,8 +1,13 @@
 # Load packages
 library(tidyverse)
-devtools::install_github("marton-balazs-kovacs/SampleSizePlanner", force = TRUE)
-library(SampleSizePlanner)
 library(furrr)
+
+# Load functions
+r_scripts <- list.files("R/", full.names = TRUE)
+walk(r_scripts, source)
+
+## Create fail safe ROPE function
+ssp_rope_safe <- purrr::safely(ssp_rope)
 
 # Create directory to save the results in
 ifelse(!dir.exists("./rope-res"),

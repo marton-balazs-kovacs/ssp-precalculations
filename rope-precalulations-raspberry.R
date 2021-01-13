@@ -51,9 +51,7 @@ for (i in 1:n_saves) {
   # Slice the data
   slice_n <- i * 100
   
-  set_split_sliced <- 
-    set_split %>% 
-    slice(init:slice_n)
+  set_split_sliced <- set_split[init:slice_n]
   
   init <- slice_n + 1
   

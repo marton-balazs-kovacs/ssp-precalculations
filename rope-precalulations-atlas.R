@@ -52,8 +52,7 @@ rope_options <- rope_options[order(rope_options[, 1], rope_options[, 2]), ]
 rope_options$n_iterate <- 1:nrow(rope_options)
 
 # Slice the part of the options that are assigned to this machine
-# set <- rope_options[4001:60000,]
-set <- rope_options[100:102,]
+set <- rope_options[4001:60000, ]
 
 saveRDS(set, "./rope-res/all-set.rds")
 
@@ -76,7 +75,7 @@ for (i in 1:n_saves) {
   init <- slice_n + 1
   
   # Calculate ROPE
-  rope_res <-  future.apply::future_lapply(set_split, function(x) ssp_rope_safe(opt = x$power, band = x$band, delta = x$delta))
+  rope_res <-  future.apply::future_lapply(set_split_sliced, function(x) ssp_rope_safe(opt = x$power, band = x$band, delta = x$delta))
   
   # Saving data
   saveRDS(rope_res, paste0("./rope-res/set-", i, ".rds"))

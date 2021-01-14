@@ -67,7 +67,7 @@ for (i in 1:n_saves) {
                                                   delta = .$delta))
   
   # Saving data
-  write_rds(rope_res, paste0("./rope-res/miklos-set-", i, ".rds"))
+  write_rds(rope_res, paste0("./rope-res/miklos-set-2-", i, ".rds"))
   
   # Delete output object from the global env
   rm(rope_res)

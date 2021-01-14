@@ -27,7 +27,7 @@ rope <- function(n1, delta, band, alpha = .05, tol = 1e-4, granularity = 300) {
 }
 
 ssp_rope <- function(opt, band, delta) {
-  est <- ssp_tost(opt = opt, band = band, delta = delta) %>% purrr::pluck("n1")
+  est <- ssp_tost(opt = opt, band = band, delta = delta)[[1]]
   
   power_optim(fun = rope, range = round(est * c(0.5, 1.5)), delta = delta, opt = opt, band = band)
 }

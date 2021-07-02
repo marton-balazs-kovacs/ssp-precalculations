@@ -57,6 +57,9 @@ init <- 1
 
 ## Run the calculations
 for (i in 1:n_saves) {
+  # Print the current iteration
+  print(paste("The", i, "iteration is running currently."))
+  
   # Slice the data
   slice_n <- i * 100
   

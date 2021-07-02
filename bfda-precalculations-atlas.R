@@ -45,14 +45,10 @@ bfda_options <-
   )
 
 # We start the iteration from 1231 as we already calculated the first 1230 iterations with medium prior
-bfda_options$iterate <- 1231:nrow(bfda_options)
-
-# bfda_options_rerun <-
-#   bfda_options[1201:1230, ]
+bfda_options$iterate <- as.numeric(rownames(bfda_options)) + 1230
 
 # Split the data for each iteration
 bfda_options_split <- split(bfda_options, bfda_options$iterate)
-# bfda_options_split_rerun <- split(bfda_options_rerun, bfda_options_rerun$iterate)
 
 # Run the calculation
 ## As a safety net after every 100 calculations we save the data and empty the memory
@@ -81,15 +77,3 @@ for (i in 1:n_saves) {
   # Empty memory
   gc()
 }
-
-# # BFDA rerun
-# bfda_res <-  future.apply::future_lapply(bfda_options_split_rerun, function(x) ssp_bfda_safe(tpr = x$tpr, delta = x$delta, thresh = x$thresh))
-#   
-# # Saving data
-# saveRDS(bfda_res, "./bfda-res/set-13.rds")
-#   
-# # Remove object
-# rm(bfda_res)
-#   
-# # Empty memory
-# gc()

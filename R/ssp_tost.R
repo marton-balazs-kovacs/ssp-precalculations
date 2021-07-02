@@ -25,9 +25,12 @@ ssp_tost <- function(tpr, eq_band, delta, sigma = 1, nr = 1, alpha = .05) {
     npower = sum(wcpdf * (pnorm((eq_band - delta) / std - st) - pnorm((-eq_band - delta) / std + st)))
   }
   
-  return(
-    list(n1 = round(n1, 4),
-         n2 = round(n2, 4),
-         npower = round(npower, 4)))
-  # }
+  if (npower == 0) {
+    stop("Your chosen power level cannot be achieved for n < 10001!")
+  } else {
+    return(
+      list(n1 = round(n1, 4),
+           n2 = round(n2, 4),
+           npower = round(npower, 4)))
+  }
 }

@@ -1,6 +1,5 @@
 # Load packages
 library(future.apply)
-library(readr)
 
 # Load functions
 source("R/cdf_t.R")
@@ -11,10 +10,10 @@ source("R/ssp_rope.R")
 source("R/ssp_tost.R")
 
 ## Create fail safe ROPE function
-ssp_rope_safe <- function(tpr, eq_band, delta) {
+ssp_rope_safe <- function(tpr, eq_band, delta, prior_scale) {
   out <- tryCatch(
     {
-      r <- ssp_rope(tpr = tpr, eq_band = eq_band, delta = delta)
+      r <- ssp_rope(tpr = tpr, eq_band = eq_band, delta = delta, prior_scale = prior_scale)
       
       list(result = r, error = NULL)
     },
@@ -41,15 +40,23 @@ n_cores <- availableCores() - 1
 plan(multisession, workers = n_cores)
 
 # Create datatable storing possible ROPE options
-set <- readr::read_csv("rope_data_rerun.csv")
+rope_options <- 
+  expand.grid(
+    tpr = seq(0.5, 0.95, by = 0.05),
+    delta = seq(0, 2, by = 0.05),
+    eq_band = seq(0.1, 0.5, by = 0.01),
+    prior_scale = c(1 / sqrt(2), 1, sqrt(2))
+  )
+
+rope_options$iterate <- 1:nrow(rope_options)
 
 # Split the data for each iteration
-set_split <- split(set, set$iterate)
+rope_options_split <- split(rope_options, rope_options$iterate)
 
 # Run the calculation
 ## As a safety net after every 100 calculations we save the data and empty the memory.
 ## Init variables for the loop
-n_saves <- length(set_split)  / 100
+n_saves <- length(rope_options_split)  / 100
 init <- 1
 
 ## Run the calculations
@@ -57,12 +64,12 @@ for (i in 1:n_saves) {
   # Slice the data
   slice_n <- i * 100
   
-  set_split_sliced <- set_split[init:slice_n]
+  rope_options_sliced <- rope_options_split[init:slice_n]
   
   init <- slice_n + 1
   
   # Calculate ROPE
-  rope_res <-  future.apply::future_lapply(set_split_sliced, function(x) ssp_rope_safe(tpr = x$power, eq_band = x$band, delta = x$delta))
+  rope_res <-  future.apply::future_lapply(rope_options_sliced, function(x) ssp_rope_safe(tpr = x$tpr, eq_band = x$eq_band, delta = x$delta, prior_scale = x$prior_scale))
   
   # Saving data
   saveRDS(rope_res, paste0("./rope-res/set-", i, ".rds"))

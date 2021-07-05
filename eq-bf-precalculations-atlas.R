@@ -1,8 +1,14 @@
 # Load packages
 library(future.apply)
+library(purrr)
 
 # Load functions
 source("R/ssp_eq_bf.R")
+source("R/ssp_tost.R")
+source("R/power_optim.R")
+source("R/cdf_t.R")
+source("R/integrand_t.R")
+source("R/posterior_t.R")
 
 ## Create fail safe ROPE function
 ssp_eq_bf_safe <- function(tpr, delta, thresh, eq_band, prior_scale) {

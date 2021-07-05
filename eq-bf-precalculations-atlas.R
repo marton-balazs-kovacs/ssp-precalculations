@@ -71,7 +71,7 @@ for (i in 1:n_saves) {
   eq_bf_res <-  future.apply::future_lapply(eq_bf_options_sliced, function(x) ssp_eq_bf_safe(tpr = x$tpr, eq_band = x$eq_band, delta = x$delta, thresh = x$thresh, prior_scale = x$prior_scale))
   
   # Saving data
-  saveRDS(eq_bf_res, paste0("./eq_bf-res/set-", i, ".rds"))
+  saveRDS(eq_bf_res, paste0("./eq-bf-res/set-", i, ".rds"))
   
   # Remove object
   rm(eq_bf_res)

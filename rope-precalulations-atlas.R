@@ -45,7 +45,7 @@ rope_options <-
   expand.grid(
     tpr = seq(0.5, 0.95, by = 0.05),
     delta = seq(0, 2, by = 0.05),
-    eq_band = seq(0.1, 0.5, by = 0.01),
+    eq_band = seq(0.1, 0.5, by = 0.05),
     prior_scale = c(1 / sqrt(2), 1, sqrt(2))
   )
 

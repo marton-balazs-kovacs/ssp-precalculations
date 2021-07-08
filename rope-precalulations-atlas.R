@@ -1,5 +1,6 @@
 # Load packages
 library(future.apply)
+library(purrr)
 
 # Load functions
 source("R/cdf_t.R")

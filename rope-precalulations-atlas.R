@@ -6,7 +6,7 @@ library(purrr)
 source("R/cdf_t.R")
 source("R/integrand_t.R")
 source("R/posterior_t.R")
-source("R/power_optim.R")
+source("R/tpr_optim.R")
 source("R/ssp_rope.R")
 source("R/ssp_tost.R")
 

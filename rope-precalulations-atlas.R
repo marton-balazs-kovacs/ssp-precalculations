@@ -11,16 +11,36 @@ source("R/ssp_rope.R")
 source("R/ssp_tost.R")
 
 ## Create fail safe ROPE function
-ssp_rope_safe <- function(tpr, eq_band, delta, prior_scale) {
+ssp_rope_safe <- function(tpr, eq_band, delta, prior_scale, iteration) {
   out <- tryCatch(
     {
       r <- ssp_rope(tpr = tpr, eq_band = eq_band, delta = delta, prior_scale = prior_scale)
       
-      list(result = r, error = NULL)
+      list(
+        result = r,
+        error = NULL,
+        params = list(
+          tpr = tpr,
+          eq_band = eq_band,
+          delta = delta,
+          prior_scale = prior_scale,
+          iteration = iteration
+          )
+        )
     },
     error = function(e) {
       
-      list(result = NULL, error = e)
+      list(
+        result = NULL,
+        error = e,
+        params = list(
+          tpr = tpr,
+          eq_band = eq_band,
+          delta = delta,
+          prior_scale = prior_scale,
+          iteration = iteration
+        )
+      )
     }
   )
   return(out)
@@ -73,7 +93,7 @@ for (i in 1:n_saves) {
   init <- slice_n + 1
   
   # Calculate ROPE
-  rope_res <-  future.apply::future_lapply(rope_options_sliced, function(x) ssp_rope_safe(tpr = x$tpr, eq_band = x$eq_band, delta = x$delta, prior_scale = x$prior_scale))
+  rope_res <-  future.apply::future_lapply(rope_options_sliced, function(x) ssp_rope_safe(tpr = x$tpr, eq_band = x$eq_band, delta = x$delta, prior_scale = x$prior_scale, iteration = x$iteration))
   
   # Saving data
   saveRDS(rope_res, paste0("./rope-res/set-", i, ".rds"))

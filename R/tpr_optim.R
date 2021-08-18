@@ -1,4 +1,4 @@
-power_optim <- function(fun, range, delta, tpr, ...) {
+tpr_optim <- function(fun, range, delta, tpr, ...) {
   Ns = range
   Res = c(fun(Ns[1], delta, ...), 
           fun(Ns[2], delta, ...))
@@ -22,7 +22,7 @@ power_optim <- function(fun, range, delta, tpr, ...) {
   return(
     list(
       n1 = min(Ns[Res>tpr]),
-      npower = Res[which(Ns==min(Ns[Res>tpr]))]
+      tpr_out = Res[which(Ns==min(Ns[Res>tpr]))]
     )
   )
 }

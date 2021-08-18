@@ -4,17 +4,37 @@ library(future.apply)
 # Load functions
 source("R/ssp_bfda.R")
 
-## Create fail safe ROPE function
-ssp_bfda_safe <- function(tpr, delta, thresh, prior_scale) {
+## Create fail safe BFDA function
+ssp_bfda_safe <- function(tpr, delta, thresh, prior_scale, iteration) {
   out <- tryCatch(
     {
       r <- ssp_bfda(tpr = tpr, delta = delta, thresh = thresh, prior_scale = prior_scale)
       
-      list(result = r, error = NULL)
+      list(
+        result = r,
+        error = NULL,
+        params = list(
+          tpr = tpr,
+          delta = delta,
+          thresh = thresh,
+          prior_scale = prior_scale,
+          iteration = iteration
+          )
+        )
     },
     error = function(e) {
       
-      list(result = NULL, error = e)
+      list(
+        result = NULL,
+        error = e,
+        params = list(
+          tpr = tpr,
+          delta = delta,
+          thresh = thresh,
+          prior_scale = prior_scale,
+          iteration = iteration
+        )
+      )
     }
   )
   return(out)
@@ -40,8 +60,7 @@ bfda_options <-
     tpr = seq(0.5, 0.95, by = 0.05),
     delta = seq(0, 2, by = 0.05),
     thresh = c(3, 6, 10),
-    # We do not recalculate the results with medium scale because we already did that
-    prior_scale = c(1, sqrt(2))
+    prior_scale = c(1 / sqrt(2), 1, sqrt(2))
   )
 
 # We start the iteration from 1231 as we already calculated the first 1230 iterations with medium prior
@@ -69,7 +88,7 @@ for (i in 1:n_saves) {
   init <- slice_n + 1
 
   # Calculate BFDA
-  bfda_res <-  future.apply::future_lapply(bfda_options_sliced, function(x) ssp_bfda_safe(tpr = x$tpr, delta = x$delta, thresh = x$thresh, prior_scale = x$prior_scale))
+  bfda_res <-  future.apply::future_lapply(bfda_options_sliced, function(x) ssp_bfda_safe(tpr = x$tpr, delta = x$delta, thresh = x$thresh, prior_scale = x$prior_scale, iteration = x$iteration))
 
   # Saving data
   saveRDS(bfda_res, paste0("./bfda-res/set-", i, ".rds"))

@@ -5,22 +5,43 @@ library(purrr)
 # Load functions
 source("R/ssp_eq_bf.R")
 source("R/ssp_tost.R")
-source("R/power_optim.R")
+source("R/tpr_optim.R")
 source("R/cdf_t.R")
 source("R/integrand_t.R")
 source("R/posterior_t.R")
 
-## Create fail safe ROPE function
-ssp_eq_bf_safe <- function(tpr, delta, thresh, eq_band, prior_scale) {
+## Create fail safe eq-bf function
+ssp_eq_bf_safe <- function(tpr, delta, thresh, eq_band, prior_scale, iterate) {
   out <- tryCatch(
     {
       r <- ssp_eq_bf(tpr = tpr, eq_band = eq_band, delta = delta, thresh = thresh, prior_scale = prior_scale)
       
-      list(result = r, error = NULL)
+      list(
+        result = r,
+        error = NULL,
+        params = list(
+          tpr = tpr,
+          eq_band = eq_band,
+          delta = delta,
+          thresh = thresh,
+          prior_scale = prior_scale,
+          iterate = iterate
+          )
+        )
     },
     error = function(e) {
       
-      list(result = NULL, error = e)
+      list(
+        result = NULL,
+        error = e,
+        params = list(
+          tpr = tpr,
+          eq_band = eq_band,
+          delta = delta,
+          thresh = thresh,
+          prior_scale = prior_scale,
+          iterate = iterate
+        ))
     }
   )
   return(out)
@@ -40,7 +61,7 @@ n_cores <- availableCores() - 1
 # Make a future plan for one multicore machine
 plan(multisession, workers = n_cores)
 
-# Create datatable storing possible BFDA options
+# Create datatable storing possible eq-bf options
 eq_bf_options <- 
   expand.grid(
     tpr = seq(0.5, 0.95, by = 0.05),
@@ -74,7 +95,7 @@ for (i in 1:n_saves) {
   init <- slice_n + 1
   
   # Calculate Equivalence Bayes factor
-  eq_bf_res <-  future.apply::future_lapply(eq_bf_options_sliced, function(x) ssp_eq_bf_safe(tpr = x$tpr, eq_band = x$eq_band, delta = x$delta, thresh = x$thresh, prior_scale = x$prior_scale))
+  eq_bf_res <-  future.apply::future_lapply(eq_bf_options_sliced, function(x) ssp_eq_bf_safe(tpr = x$tpr, eq_band = x$eq_band, delta = x$delta, thresh = x$thresh, prior_scale = x$prior_scale, iterate = x$iterate))
   
   # Saving data
   saveRDS(eq_bf_res, paste0("./eq-bf-res/set-", i, ".rds"))

@@ -5,7 +5,7 @@ library(future.apply)
 source("R/ssp_bfda.R")
 
 ## Create fail safe BFDA function
-ssp_bfda_safe <- function(tpr, delta, thresh, prior_scale, iteration) {
+ssp_bfda_safe <- function(tpr, delta, thresh, prior_scale, iterate) {
   out <- tryCatch(
     {
       r <- ssp_bfda(tpr = tpr, delta = delta, thresh = thresh, prior_scale = prior_scale)
@@ -18,7 +18,7 @@ ssp_bfda_safe <- function(tpr, delta, thresh, prior_scale, iteration) {
           delta = delta,
           thresh = thresh,
           prior_scale = prior_scale,
-          iteration = iteration
+          iterate = iterate
           )
         )
     },
@@ -32,7 +32,7 @@ ssp_bfda_safe <- function(tpr, delta, thresh, prior_scale, iteration) {
           delta = delta,
           thresh = thresh,
           prior_scale = prior_scale,
-          iteration = iteration
+          iterate = iterate
         )
       )
     }
@@ -88,7 +88,7 @@ for (i in 1:n_saves) {
   init <- slice_n + 1
 
   # Calculate BFDA
-  bfda_res <-  future.apply::future_lapply(bfda_options_sliced, function(x) ssp_bfda_safe(tpr = x$tpr, delta = x$delta, thresh = x$thresh, prior_scale = x$prior_scale, iteration = x$iteration))
+  bfda_res <-  future.apply::future_lapply(bfda_options_sliced, function(x) ssp_bfda_safe(tpr = x$tpr, delta = x$delta, thresh = x$thresh, prior_scale = x$prior_scale, iterate = x$iterate))
 
   # Saving data
   saveRDS(bfda_res, paste0("./bfda-res/set-", i, ".rds"))

@@ -55,7 +55,7 @@ ssp_eq_bf_safe <- function(tpr, delta, thresh, eq_band, prior_scale, iterate) {
 
 # Create directory to save the results in
 ifelse(!dir.exists("./eq-bf-res-remaining"),
-       dir.create("./eq-bf-res-remainings"),
+       dir.create("./eq-bf-res-remaining"),
        "Directory already exists.")
 
 # Read the outputs of all iterations
